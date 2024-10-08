@@ -1,0 +1,34 @@
+version: "3.8"
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: mysql_db
+    environment:
+      MYSQL_ROOT_PASSWORD: admin123
+      MYSQL_DATABASE: oster
+      MYSQL_USER: us_oster
+      MYSQL_PASSWORD: pass123
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - my_network
+
+  api:
+    build: .
+    container_name: oster_api
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URI: mysql+pymysql://us_oster:pass123@db:3306/oster
+    depends_on:
+      - db
+    networks:
+      - my_network
+
+volumes:
+  mysql_data:
+networks:
+  my_network:
